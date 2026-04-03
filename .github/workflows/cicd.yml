@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  docker_build_deploy:   # identifiant du job (clé obligatoire)
+  docker_build_deploy:   ###### identifiant du job (clé obligatoire)
     name: Docker Build & Deploy
     runs-on: self-hosted
 
