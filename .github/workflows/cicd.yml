@@ -1,0 +1,33 @@
+name: CI/CD Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker_build_deploy:   # <-- identifiant du job (clé obligatoire)
+    name: Docker Build & Deploy
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set PowerShell Execution Policy
+        shell: powershell
+        run: Set-ExecutionPolicy RemoteSigned -Scope Process -Force
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+         username: ${{ secrets.DOCKERHUB_USERNAME }}
+         password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Docker image
+        shell: powershell
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/flask_devops_cd:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/flask_devops_cd:latest
+
+     
+      - name: Deploy locally
+        run: powershell -ExecutionPolicy Bypass -File ".\deploy.ps1"
